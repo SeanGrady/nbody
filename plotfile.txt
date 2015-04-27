@@ -1,0 +1,5 @@
+do for [ii=1:1000] {
+    plot 'nbs.txt' using 1:2 every ::1::ii w l ls 1, 'nbs.txt' using 1:2 every ::ii::ii w p ls 1,\
+         'nbs.txt' using 4:5 every ::1::ii w l ls 1, 'nbs.txt' using 4:5 every ::ii::ii w p ls 1,\
+         'nbs.txt' using 7:8 every ::1::ii w l ls 1, 'nbs.txt' using 7:8 every ::ii::ii w p ls 1,\
+}
