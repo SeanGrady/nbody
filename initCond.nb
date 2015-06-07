@@ -1,0 +1,36 @@
+Uniform Sample
+
+boxsize = 5;
+velmax = 1000;
+mmax = 1000;
+nparticles = 1000;
+masses = RandomReal[{0, mmax}, nparticles];
+xpos = RandomReal[{-boxsize, boxsize}, nparticles];
+ypos = RandomReal[{-boxsize, boxsize}, nparticles];
+zpos = RandomReal[{-boxsize, boxsize}, nparticles];
+xvel = RandomReal[{-velmax, velmax}, nparticles];
+yvel = RandomReal[{-velmax, velmax}, nparticles];
+zvel = RandomReal[{-velmax, velmax}, nparticles];
+
+all = Table[{masses[[i]], xpos[[i]], ypos[[i]], zpos[[i]], xvel[[i]], 
+    yvel[[i]], zvel[[i]]}, {i, nparticles}];
+    
+ListPointPlot3D[
+ Table[{xpos[[i]], ypos[[i]], zpos[[i]]}, {i, nparticles}], 
+ PlotRange -> All]
+ 
+ Gaussian, Mixture
+ 
+ dist = MixtureDistribution[{1, 2}, {NormalDistribution[1, 1/2], 
+    NormalDistribution[4, 5/3]}];
+data = RandomVariate[dist, 10^5];
+Show[Histogram[data, 45, "ProbabilityDensity"], 
+ Plot[PDF[dist, x], {x, -2, 10}, PlotStyle -> PointSize[Medium]]]
+ 
+ 
+ pos = RandomVariate[
+   MultinormalDistribution[{0, 0, 
+     0}, {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}}], nparticles];
+     
+ListPointPlot3D[pos, PlotRange -> All]
+Export["data.dat", pos] 
