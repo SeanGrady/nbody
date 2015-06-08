@@ -1,4 +1,4 @@
-#include "mpi.h"
+#include <mpi.h>
 #include <stdio.h>
 #include <math.h>
 
@@ -18,13 +18,14 @@ extern double drand48();
 /* we really need the velocities as well... */
 typedef struct {
     double x, y, z;
+    double vx, vy, vz;
     double mass;
     } Particle;
 
 /* Save the forces and old velocities */
 typedef struct {
-    double xold, yold, zold;
-    double fx, fy, fz;
+    double vxold, vyold, vzold;
+    double ax, ay, az;
     } ParticleV;
 
 #define MAX_PARTICLES 4000
@@ -49,17 +50,17 @@ for (i=0; i<npart; i++) {
     fx   = 0.0;
     fy   = 0.0;
     for (j=0; j<rlen; j++) {
-	rx = xi - recvbuf[j].x;
-	ry = yi - recvbuf[j].y;
-	mj = recvbuf[j].mass;
-	r  = rx * rx + ry * ry;
-	/* ignore overlap and same particle */
-	if (r == 0.0) continue;
-	if (r < rmin) rmin = r;
-	/* compute forces */
-	r  = r * sqrt(r);
-	fx += mj * rx / r;
-	fy += mj * ry / r;
+	    rx = xi - recvbuf[j].x;
+	    ry = yi - recvbuf[j].y;
+	    mj = recvbuf[j].mass;
+	    r  = rx * rx + ry * ry;
+	    /* ignore overlap and same particle */
+	    if (r == 0.0) continue;
+	    if (r < rmin) rmin = r;
+	    /* compute forces */
+	    r  = r * sqrt(r);
+	    fx += mj * rx / r;
+	    fy += mj * ry / r;
 	}
     pv[i].fx -= fx;
     pv[i].fy -= fy;
@@ -84,7 +85,7 @@ double   t;
 
     for (i=0; i<npart; i++) {
     /*     printf( "[%f] (%f,%f)\n", t, particles[i].x, particles[i].y ); */
-        fprintf( "%f %f %f\n", particles[i].x, particles[i].y );
+        fprintf(f, "%f %f %f\n", particles[i].x, particles[i].y );
         }
     fclose(f);
 }
