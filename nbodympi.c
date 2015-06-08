@@ -74,12 +74,19 @@ Particle *particles;
 int      npart;
 double   t;
 {
-int i;
+    int i;
 
-for (i=0; i<npart; i++) {
-/*     printf( "[%f] (%f,%f)\n", t, particles[i].x, particles[i].y ); */
-    printf( "%f %f\n", particles[i].x, particles[i].y );
+    FILE *f = fopen("save.txt", "ab");
+    if (f == NULL)
+    {
+        printf("error opening save file\n");
     }
+
+    for (i=0; i<npart; i++) {
+    /*     printf( "[%f] (%f,%f)\n", t, particles[i].x, particles[i].y ); */
+        fprintf( "%f %f %f\n", particles[i].x, particles[i].y );
+        }
+    fclose(f);
 }
 
 int main( argc, argv )
