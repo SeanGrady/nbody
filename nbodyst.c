@@ -15,53 +15,51 @@ main () {
     int num_p = 1000;
     particle particles[num_p];
     
-    FILE *fout = fopen("nbs.txt", "w");
+    FILE *fout = fopen("newsave.txt", "w");
     FILE *fin = fopen("data.dat", "rb");
     int l;
     for(l = 0; l < num_p; l++){
         fscanf(fin,"%lf %lf %lf", &particles[l].x, &particles[l].y, &particles[l].z);
         particles[l].vx = particles[l].vy = particles[l].vz =0;
-        particles[l].mass = 1.0;
+        particles[l].mass = 2.0;
     }
     printf("test: %f, %f, %f\n", particles[1].x, particles[1].y, particles[1].z);
     
-    int n = 3;
-    float dt = 1;
-    float G = 6.67384 * pow(10,-8);
+    float dt = 1.0;
+    double G = 6.67384 * pow(10,-8);
     int i;
     int j;
-    float ax, ay, az, dx, dy, dz, xi, yi, zi, invr, invr3, f, eps;
+    double ax, ay, az, dx, dy, dz, xi, yi, zi, r, invr, invr3, f, eps;
     eps = .01;
-    float x[3] = {1., -2., 1.};
-    float y[3] = {3., -1., -1.};
-    float z[3] = {0., 0., 0.};
-    float xnew[n];
-    float ynew[n];
-    float znew[n];
-    float vx[3] = {0., 0., 0.};
-    float vy[3] = {0., 0., 0.};
-    float vz[3] = {0., 0., 0.};
-    float m[3] = {3, 4, 5};
     int T = 100000;
     int t;
+
+    
+    for(i=0; i < num_p; i++) {
+        fprintf(fout, "%f %f %f\n", particles[i].x, particles[i].y, particles[i].z);
+    }
+    
     for(t=0; t < T; t++){
-        for(i=0; i < n; i++) {
+        for(i=0; i < num_p; i++) {
             xi = particles[i].x;
             yi = particles[i].y;
             zi = particles[i].z;
             ax = 0.0;
             ay = 0.0;
             az = 0.0;
-            for(j=0; j < n; j++) {
+            for(j=0; j < num_p; j++) {
                 if(i==j) {
                     continue;
                 }
-                dx = xi - particles[j].x;
-                dy = yi - particles[j].y;
-                dz = zi - particles[j].z;
+                dx = particles[j].x - xi;
+                dy = particles[j].y - yi;
+                dz = particles[j].z - zi;
+                r = dx*dx + dy*dy + dz*dz + eps;
                 invr = 1.0/sqrt(dx*dx + dy*dy + dz*dz + eps);
                 invr3 = invr*invr*invr;
-                f = G*m[j]*invr3;
+                f = G*particles[j].mass*invr3;
+                //printf("G %f, mass %f, invr3 %f", G, particles[j].mass, invr3);
+                //printf("f: %f\n", f * pow(10, 8));
                 ax += f*dx;
                 ay += f*dy;
                 az += f*dz;
@@ -70,12 +68,15 @@ main () {
             particles[i].vy += dt*ay;
             particles[i].vz += dt*az;
         }
-        for(i=0; i < n; i++) {
+        if(t%100 == 0) {
+            printf("Timestep: %d\n", t);
+        }
+        for(i=0; i < num_p; i++) {
             particles[i].x += dt*particles[i].vx;
             particles[i].y += dt*particles[i].vy;
             particles[i].z += dt*particles[i].vz;
-            if(t%100 == 0) {
-                fprintf(fout, "%f\t%f\t%f\t\n", particles[i].x, particles[i].y, particles[i].z);
+            if((t -1)%100 == 0) {
+                fprintf(fout, "%f %f %f\n", particles[i].x, particles[i].y, particles[i].z);
             }
         }
         //if(t%100 == 0) {
